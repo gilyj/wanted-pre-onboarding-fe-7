@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import useAxios from '../../lib/Hooks/useAxios';
-import { SignUpContext } from '../../lib/context/AuthContext';
+import { AuthContext } from '../../lib/context/AuthContext';
 
 import { METHODS, API_URL } from './../../lib/api/Constants';
 import {useParams} from 'react-router-dom';
@@ -11,7 +11,10 @@ import {useParams} from 'react-router-dom';
 const Auth = () => {
   const params = useParams();
   const {reqFunc} = useAxios();
-  const {signUpState, setLogin} = useContext(SignUpContext);
+  // const {signUpState, setLogin} = useContext(SignUpContext);
+  const {setInfoHandler, authState, authInfo} = useContext(AuthContext);
+
+  console.log(authInfo)
   
   console.log(params);
   const onSignInHandler = (e) => {
@@ -20,13 +23,13 @@ const Auth = () => {
     let params = {
       method: METHODS.POST,
       url: API_URL.AUTH.SIGNIN,
-      data: signUpState
+      data: authInfo
     }
     reqFunc(params)
   }
 
   const onChangeHandler = (e) => {
-    setLogin(
+    setInfoHandler(
       {
         [e.target.name] : e.target.value
       }
@@ -34,8 +37,8 @@ const Auth = () => {
   }
   return (
     <form onSubmit={onSignInHandler}>
-      <input type="text" name="email" id="email" onChange={onChangeHandler} value={"" || signUpState.email} />
-      <input type="password" name="password" id="password" onChange={onChangeHandler} value={"" || signUpState.password}/>
+      <input type="text" name="email" id="email" onChange={onChangeHandler} value={"" || authInfo.email} />
+      <input type="password" name="password" id="password" onChange={onChangeHandler} value={"" || authInfo.password}/>
 
       <button>로그인</button>
     </form>

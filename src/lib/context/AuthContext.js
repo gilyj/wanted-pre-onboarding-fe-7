@@ -1,51 +1,81 @@
-import { createContext, useState, useMemo, useCallback } from 'react';
+import { createContext, useState, useMemo, useCallback, useEffect } from 'react';
 
 const initialState = {
-  signUp: {
+  authState: 'login',
+  info: {
     email: '',
     password: '',
   },
-  singIn: {
-    email: '',
-    password: ''
-  }
 }
 
-export const SignUpContext = createContext();
-export const SignInContext = createContext();
+export const AuthContext = createContext();
 
 
 const AuthProvider = ({children}) => {
+  const [authState, setAuthState] = useState(initialState.authState);
+  const [authInfo, setAuthInfo] = useState(initialState.info);
 
-  const [signUpState, setSignUpState] = useState(initialState.signUp);
-  const [signInState, setSignInState] = useState(initialState.singIn);
+  useEffect(() => {
+    if(window.localStorage.getItem('key')){
+      console.log('key')
+    }
+  }, [])
 
-  const setLogin = useCallback((data) => {
-    setSignUpState((prev) => ({
+  // const [signUpState, setSignUpState] = useState(initialState.signUp);
+  // const [signInState, setSignInState] = useState(initialState.singIn);
+
+  // const setLogin = useCallback((data) => {
+  //   setSignInState((prev) => ({
+  //     ...prev,
+  //     ...data
+  //   }))
+  // }, []);
+
+  // const setRegister = useCallback((data) => {
+  //   setSignUpState((prev) => ({
+  //     ...prev,
+  //     ...data
+  //   }))
+  // }, [])
+
+  // const signUpValue = useMemo(() => {
+  //   return{
+  //     signUpState,
+  //     setRegister
+  //   }
+  // }, [signUpState, setRegister])
+
+  // const signInValue = useMemo(() => {
+  //   return{
+  //     signInState,
+  //     setLogin,
+  //   }
+  // }, [signInState, setLogin])
+
+  const setInfoHandler = useCallback((data) => {
+    setAuthInfo((prev) => ({
       ...prev,
       ...data
     }))
-  }, [])
+  }, []);
 
-  const signUpValue = useMemo(() => {
+  const authValue = useMemo(() => {
     return{
-      signUpState,
-      setLogin
-
-      
+      setInfoHandler,
+      authState,
+      authInfo
     }
-  }, [signUpState, setLogin])
-
-  const signInValue = () => {
-
-  }
+  }, [setInfoHandler, authState, authInfo])
 
   return(
-    <SignUpContext.Provider value={signUpValue}>
-      <SignInContext.Provider value={signInValue}>
-        {children}
-      </SignInContext.Provider>
-    </SignUpContext.Provider>
+    // <SignUpContext.Provider value={signUpValue}>
+    //   <SignInContext.Provider value={signInValue}>
+    //     {children}
+    //   </SignInContext.Provider>
+    // </SignUpContext.Provider>
+    <AuthContext.Provider value={authValue}>
+      {children}
+    </AuthContext.Provider>
   )
 }
 

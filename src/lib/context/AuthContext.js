@@ -1,83 +1,74 @@
-import { createContext, useState, useMemo, useCallback, useEffect } from 'react';
+import {
+  createContext,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+} from "react";
 
 const initialState = {
-  authState: 'login',
+  authState: null,
   info: {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   },
-}
+  register: false,
+  title: "로그인",
+};
 
 export const AuthContext = createContext();
 
+const AuthProvider = ({ children }) => {
+  const [authState, setAuthState] = useState(
+    window.localStorage.getItem("access_token")
+  );
 
-const AuthProvider = ({children}) => {
-  const [authState, setAuthState] = useState(initialState.authState);
   const [authInfo, setAuthInfo] = useState(initialState.info);
+  const [register, setRegister] = useState(initialState.register);
+  const [title, setTitle] = useState(initialState.title);
 
   useEffect(() => {
-    if(window.localStorage.getItem('key')){
-      console.log('key')
+    if (window.localStorage.getItem("access_token")) {
+      setAuthState("login");
+    } else {
+      setAuthState(null);
     }
-  }, [])
+  }, [authState]);
 
-  // const [signUpState, setSignUpState] = useState(initialState.signUp);
-  // const [signInState, setSignInState] = useState(initialState.singIn);
-
-  // const setLogin = useCallback((data) => {
-  //   setSignInState((prev) => ({
-  //     ...prev,
-  //     ...data
-  //   }))
-  // }, []);
-
-  // const setRegister = useCallback((data) => {
-  //   setSignUpState((prev) => ({
-  //     ...prev,
-  //     ...data
-  //   }))
-  // }, [])
-
-  // const signUpValue = useMemo(() => {
-  //   return{
-  //     signUpState,
-  //     setRegister
-  //   }
-  // }, [signUpState, setRegister])
-
-  // const signInValue = useMemo(() => {
-  //   return{
-  //     signInState,
-  //     setLogin,
-  //   }
-  // }, [signInState, setLogin])
+  useEffect(() => {
+    if (register) {
+      setTitle("회원가입");
+    } else {
+      setTitle("로그인");
+    }
+  }, [register]);
 
   const setInfoHandler = useCallback((data) => {
     setAuthInfo((prev) => ({
       ...prev,
-      ...data
-    }))
+      ...data,
+    }));
   }, []);
 
+  const setRegHandler = useCallback(() => {
+    setRegister((prev) => !register);
+  }, [register]);
+
   const authValue = useMemo(() => {
-    return{
+    return {
       setInfoHandler,
       authState,
-      authInfo
-    }
-  }, [setInfoHandler, authState, authInfo])
+      authInfo,
+      setRegHandler,
+      register,
+      setRegHandler,
+      title,
+    };
+  }, [setInfoHandler, authState, authInfo, register, setRegHandler, title]);
 
-  return(
-    // <SignUpContext.Provider value={signUpValue}>
-    //   <SignInContext.Provider value={signInValue}>
-    //     {children}
-    //   </SignInContext.Provider>
-    // </SignUpContext.Provider>
-    <AuthContext.Provider value={authValue}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
-
+  return (
+    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
+  );
+};
 
 export default AuthProvider;

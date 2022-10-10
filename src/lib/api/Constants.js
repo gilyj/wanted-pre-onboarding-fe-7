@@ -14,6 +14,6 @@ export const API_URL = {
   TODO: {
     CREATE: "/todos",
     GETTODOS: "/todos",
-    UPDATE: `/todos/:{id}`,
+    UPDATE: `/todos`,
   },
 };

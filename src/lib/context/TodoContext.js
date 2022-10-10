@@ -9,14 +9,14 @@ import { API_URL, METHODS } from "../api/Constants";
 import useAxios from "../Hooks/useAxios";
 
 const initialState = {
-  todo: "",
+  todoTitle: "",
   todoList: [],
 };
 
 export const TodoContext = createContext();
 
 const TodoProvider = ({ children }) => {
-  const [todo, setTodo] = useState(initialState.todo);
+  const [todoTitle, setTodoTitle] = useState(initialState.todoTitle);
   const [todoList, setTodoList] = useState(initialState.todoList);
 
   const { reqFunc } = useAxios();
@@ -41,18 +41,18 @@ const TodoProvider = ({ children }) => {
 
   const setTodoHandler = useCallback(
     (payload) => {
-      setTodo(payload);
+      setTodoTitle(payload);
     },
-    [todo]
+    [todoTitle]
   );
 
   const todoValue = useMemo(() => {
     return {
       setTodoHandler,
-      todo,
+      todoTitle,
       todoList,
     };
-  }, [setTodoHandler, todo, todoList]);
+  }, [setTodoHandler, todoTitle, todoList]);
 
   return (
     <TodoContext.Provider value={todoValue}>{children}</TodoContext.Provider>
